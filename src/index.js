@@ -1,30 +1,26 @@
 import Phaser from "phaser";
 import Bg from "./assets/BG.png";
 import Tile from "./assets/tile.png";
-import CatWalk from "./assets/cat-walk.png";
+
+import PlayerHanlder from "./objects/player";
 
 class MyGame extends Phaser.Scene {
   constructor() {
     super();
     this.platforms = {},
-    this.player = {},
-    this.cursors = undefined
+      this.playerHandler = new PlayerHanlder(this),
+      this.cursors = undefined
   }
 
   preload() {
     this.load.image("bg", Bg);
     this.load.image("tile", Tile);
-    this.load.spritesheet('catWalk', 
-        CatWalk,
-        { frameWidth: 64, frameHeight: 40 }
-    );
+    this.playerHandler.preload();
   }
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.add.image(0, 0, "bg").setOrigin(0, 0);
-    console.log(this);
-    console.log(Phaser);
     this.platforms = this.physics.add.staticGroup();
 
     this.platforms.create(400, 568, "tile");
@@ -32,54 +28,43 @@ class MyGame extends Phaser.Scene {
     this.platforms.create(600, 400, "tile");
     this.platforms.create(50, 250, "tile");
     this.platforms.create(750, 220, "tile");
+    this.platforms.create(50, 600, "tile");
+    this.platforms.create(50, 500, "tile");
+    this.platforms.create(150, 600, "tile");
+    this.platforms.create(250, 600, "tile");
+    this.platforms.create(300, 600, "tile");
+    this.platforms.create(350, 600, "tile");
 
-    this.player = this.physics.add.sprite(100, 450, "catWalk").setScale(1.5);
 
-    this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(true);
+    this.playerHandler.create();
+    this.physics.add.collider(this.playerHandler.player, this.platforms);
     
 
-    this.anims.create({
-        key: "left",
-        frames: this.anims.generateFrameNumbers("catWalk", { start: 0, end: 7 }),
-        frameRate: 30,
-        repeat: -1,
-      });
 
-    this.anims.create({
-        key: "right",
-        frames: this.anims.generateFrameNumbers("catWalk", { start: 0, end: 7 }),
-        frameRate: 30,
-        repeat: -1,
-      });
+
+    this.input.keyboard.on('keydown-A', function (event) {
+
+      this.cameras.main.setRotation(this.cameras.main.rotation - 0.01);
+
+    }, this);
   }
 
-  update(){
-    if (this.cursors.left.isDown)
-    {
-        this.player.setVelocityX(-160);
-        console.log(this.player);
-        // this.player.frame.scaleX(-1);
-        this.player.flipX = true;
-        this.player.anims.play('left', true);
-    }
-    else if (this.cursors.right.isDown)
-    {
-        this.player.setVelocityX(160);
-        this.player.flipX = false;
-        this.player.anims.play('right', true);
-    }
-    else
-    {
-        this.player.setVelocityX(0);
-    
-        this.player.anims.stop();
-    }
-    
-    if (this.cursors.up.isDown && this.player.body.touching.down)
-    {
-        this.player.setVelocityY(-330);
-    }
+  update() {
+    this.playerHandler.update();
+
+
+
+
+    // if (!this.player.body.touching.down) {
+    //   // console.log(this.player);
+    //   if (this.player.body.velocity.y < 0) {
+    //     this.player.anims.play("jumpingUp",true);
+    //   } else {
+       
+    //     this.player.anims.play("jumpingDown",true);
+    //   }
+    // }
+
 
   }
 }
