@@ -9,19 +9,37 @@ class MyGame extends Phaser.Scene {
     super();
     this.platforms = {},
       this.playerHandler = new PlayerHanlder(this),
-      this.cursors = undefined
+      this.cursors = undefined,
+      this.camera = undefined,
+      this.bg = undefined,
+      this.world = {
+        width: 2000,
+        height: 600
+      }
   }
 
   preload() {
     this.load.image("bg", Bg);
+
     this.load.image("tile", Tile);
 
     this.playerHandler.preload();
   }
 
   create() {
+
+    // Camera
+    this.camera = this.cameras.main;
+    // this.camera.setViewport(0, 0, 800, 600);
+    this.camera.setBounds(0, 0, 2000, 600);
+
+    this.physics.world.setBounds(0, 0, 2000, 600);
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.add.image(0, 0, "bg").setOrigin(0, 0);
+    // this.add.image(0, 0, "bg").setOrigin(0, 0);
+    this.bg = this.add.tileSprite(0, 0, 800, 600, 'bg');
+    this.bg.setOrigin(0, 0);
+    this.bg.setScrollFactor(0);
+
     this.platforms = this.physics.add.staticGroup();
 
     this.platforms.create(400, 568, "tile");
@@ -40,12 +58,16 @@ class MyGame extends Phaser.Scene {
 
     this.playerHandler.create();
     this.physics.add.collider(this.playerHandler.player, this.platforms);
-  
+
+    this.camera.startFollow(this.playerHandler.player);
+
   }
 
   update() {
 
     this.playerHandler.update();
+
+    this.bg.tilePositionX = this.camera.scrollX * .3;
 
   }
 }
@@ -59,7 +81,7 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: 300 },
-      debug: false,
+      debug: false
     },
   },
   scene: MyGame,

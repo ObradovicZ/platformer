@@ -41,7 +41,6 @@ class PlayerHanlder {
     }
 
     update() {
-
         if (this.scene.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.flipX = true;
