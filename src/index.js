@@ -15,6 +15,7 @@ class MyGame extends Phaser.Scene {
   preload() {
     this.load.image("bg", Bg);
     this.load.image("tile", Tile);
+
     this.playerHandler.preload();
   }
 
@@ -29,6 +30,7 @@ class MyGame extends Phaser.Scene {
     this.platforms.create(50, 250, "tile");
     this.platforms.create(750, 220, "tile");
     this.platforms.create(50, 600, "tile");
+    this.platforms.create(100, 600, "tile");
     this.platforms.create(50, 500, "tile");
     this.platforms.create(150, 600, "tile");
     this.platforms.create(250, 600, "tile");
@@ -38,33 +40,12 @@ class MyGame extends Phaser.Scene {
 
     this.playerHandler.create();
     this.physics.add.collider(this.playerHandler.player, this.platforms);
-    
-
-
-
-    this.input.keyboard.on('keydown-A', function (event) {
-
-      this.cameras.main.setRotation(this.cameras.main.rotation - 0.01);
-
-    }, this);
+  
   }
 
   update() {
+
     this.playerHandler.update();
-
-
-
-
-    // if (!this.player.body.touching.down) {
-    //   // console.log(this.player);
-    //   if (this.player.body.velocity.y < 0) {
-    //     this.player.anims.play("jumpingUp",true);
-    //   } else {
-       
-    //     this.player.anims.play("jumpingDown",true);
-    //   }
-    // }
-
 
   }
 }

@@ -1,0 +1,3 @@
+game loop
+
+why update method is better then events
