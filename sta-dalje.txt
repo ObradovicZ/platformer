@@ -1,0 +1,5 @@
+Posle input-a demonstrirati flappy bird (pratio tutorial, upoznavao se sa canvasom, modifikovao kod, link do tutoriala), 
+posle toga animacija I state,
+ demonstracija viteza (sve ja pisao) :'), Frameworks, Phaser, I demonsracija macke ​(pisao)
+
+
