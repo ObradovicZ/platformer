@@ -1,30 +1,45 @@
 import Phaser from "phaser";
 import Bg from "./assets/BG.png";
 import Tile from "./assets/tile.png";
-import CatWalk from "./assets/cat-walk.png";
+
+import PlayerHanlder from "./objects/player";
 
 class MyGame extends Phaser.Scene {
   constructor() {
     super();
     this.platforms = {},
-    this.player = {},
-    this.cursors = undefined
+      this.playerHandler = new PlayerHanlder(this),
+      this.cursors = undefined,
+      this.camera = undefined,
+      this.bg = undefined,
+      this.world = {
+        width: 2000,
+        height: 600
+      }
   }
 
   preload() {
     this.load.image("bg", Bg);
+
     this.load.image("tile", Tile);
-    this.load.spritesheet('catWalk', 
-        CatWalk,
-        { frameWidth: 64, frameHeight: 40 }
-    );
+
+    this.playerHandler.preload();
   }
 
   create() {
+
+    // Camera
+    this.camera = this.cameras.main;
+    // this.camera.setViewport(0, 0, 800, 600);
+    this.camera.setBounds(0, 0, 2000, 600);
+
+    this.physics.world.setBounds(0, 0, 2000, 600);
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.add.image(0, 0, "bg").setOrigin(0, 0);
-    console.log(this);
-    console.log(Phaser);
+    // this.add.image(0, 0, "bg").setOrigin(0, 0);
+    this.bg = this.add.tileSprite(0, 0, 800, 600, 'bg');
+    this.bg.setOrigin(0, 0);
+    this.bg.setScrollFactor(0);
+
     this.platforms = this.physics.add.staticGroup();
 
     this.platforms.create(400, 568, "tile");
@@ -32,54 +47,27 @@ class MyGame extends Phaser.Scene {
     this.platforms.create(600, 400, "tile");
     this.platforms.create(50, 250, "tile");
     this.platforms.create(750, 220, "tile");
+    this.platforms.create(50, 600, "tile");
+    this.platforms.create(100, 600, "tile");
+    this.platforms.create(50, 500, "tile");
+    this.platforms.create(150, 600, "tile");
+    this.platforms.create(250, 600, "tile");
+    this.platforms.create(300, 600, "tile");
+    this.platforms.create(350, 600, "tile");
 
-    this.player = this.physics.add.sprite(100, 450, "catWalk").setScale(1.5);
 
-    this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(true);
-    
+    this.playerHandler.create();
+    this.physics.add.collider(this.playerHandler.player, this.platforms);
 
-    this.anims.create({
-        key: "left",
-        frames: this.anims.generateFrameNumbers("catWalk", { start: 0, end: 7 }),
-        frameRate: 30,
-        repeat: -1,
-      });
+    this.camera.startFollow(this.playerHandler.player);
 
-    this.anims.create({
-        key: "right",
-        frames: this.anims.generateFrameNumbers("catWalk", { start: 0, end: 7 }),
-        frameRate: 30,
-        repeat: -1,
-      });
   }
 
-  update(){
-    if (this.cursors.left.isDown)
-    {
-        this.player.setVelocityX(-160);
-        console.log(this.player);
-        // this.player.frame.scaleX(-1);
-        this.player.flipX = true;
-        this.player.anims.play('left', true);
-    }
-    else if (this.cursors.right.isDown)
-    {
-        this.player.setVelocityX(160);
-        this.player.flipX = false;
-        this.player.anims.play('right', true);
-    }
-    else
-    {
-        this.player.setVelocityX(0);
-    
-        this.player.anims.stop();
-    }
-    
-    if (this.cursors.up.isDown && this.player.body.touching.down)
-    {
-        this.player.setVelocityY(-330);
-    }
+  update() {
+
+    this.playerHandler.update();
+
+    this.bg.tilePositionX = this.camera.scrollX * .3;
 
   }
 }
@@ -93,7 +81,7 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: 300 },
-      debug: false,
+      debug: false
     },
   },
   scene: MyGame,
