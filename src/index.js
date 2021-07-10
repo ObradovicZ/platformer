@@ -1,8 +1,9 @@
 import Phaser from "phaser";
 import Bg from "./assets/BG.png";
-import Tile from "./assets/tile.png";
+import Level0 from "./levels/level0";
 
-import PlayerHanlder from "./objects/player";
+
+import PlayerHanlder from "./objects/playerHandler";
 
 class MyGame extends Phaser.Scene {
   constructor() {
@@ -12,53 +13,33 @@ class MyGame extends Phaser.Scene {
       this.cursors = undefined,
       this.camera = undefined,
       this.bg = undefined,
-      this.world = {
-        width: 2000,
-        height: 600
-      }
+      this.level = new Level0(this)
   }
 
   preload() {
     this.load.image("bg", Bg);
 
-    this.load.image("tile", Tile);
-
+    this.level.preload();
     this.playerHandler.preload();
   }
 
   create() {
-
-    // Camera
-    this.camera = this.cameras.main;
-    // this.camera.setViewport(0, 0, 800, 600);
-    this.camera.setBounds(0, 0, 2000, 600);
-
-    this.physics.world.setBounds(0, 0, 2000, 600);
-    this.cursors = this.input.keyboard.createCursorKeys();
-    // this.add.image(0, 0, "bg").setOrigin(0, 0);
+    // Background
     this.bg = this.add.tileSprite(0, 0, 800, 600, 'bg');
     this.bg.setOrigin(0, 0);
     this.bg.setScrollFactor(0);
 
-    this.platforms = this.physics.add.staticGroup();
+    // Camera
+    this.camera = this.cameras.main;
+    this.camera.setBounds(0, 0, this.level.width, this.level.height);
 
-    this.platforms.create(400, 568, "tile");
+    this.physics.world.setBounds(0, 0, this.level.width, this.level.height);
+    this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.platforms.create(600, 400, "tile");
-    this.platforms.create(50, 250, "tile");
-    this.platforms.create(750, 220, "tile");
-    this.platforms.create(50, 600, "tile");
-    this.platforms.create(100, 600, "tile");
-    this.platforms.create(50, 500, "tile");
-    this.platforms.create(150, 600, "tile");
-    this.platforms.create(250, 600, "tile");
-    this.platforms.create(300, 600, "tile");
-    this.platforms.create(350, 600, "tile");
-
-
+    this.level.create();
     this.playerHandler.create();
-    this.physics.add.collider(this.playerHandler.player, this.platforms);
 
+    this.physics.add.collider(this.playerHandler.player, this.platforms);
     this.camera.startFollow(this.playerHandler.player);
 
   }
@@ -80,7 +61,7 @@ const config = {
   physics: {
     default: "arcade",
     arcade: {
-      gravity: { y: 300 },
+      gravity: { y: 900 },
       debug: false
     },
   },
